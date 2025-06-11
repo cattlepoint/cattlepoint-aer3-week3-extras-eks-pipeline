@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: Basic three-AZ public-subnet EKS cluster with auto-scaling managed t3.nano nodes
+Description: Basic three-AZ public-subnet EKS cluster with auto-scaling managed t3.nano nodes and explicit IAM user access entry.
 
 Parameters:
   ClusterName:
@@ -30,6 +30,7 @@ Resources:
 
   InternetGateway:
     Type: AWS::EC2::InternetGateway
+
   VPCGatewayAttachment:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
@@ -85,6 +86,7 @@ Resources:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref VPC
+
   PublicRoute:
     Type: AWS::EC2::Route
     DependsOn: VPCGatewayAttachment
@@ -92,6 +94,7 @@ Resources:
       RouteTableId: !Ref PublicRouteTable
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref InternetGateway
+
   PublicRTAssoc1:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
@@ -118,7 +121,8 @@ Resources:
         Version: "2012-10-17"
         Statement:
           - Effect: Allow
-            Principal: { Service: [eks.amazonaws.com] }
+            Principal:
+              Service: [eks.amazonaws.com]
             Action: sts:AssumeRole
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
@@ -130,7 +134,8 @@ Resources:
         Version: "2012-10-17"
         Statement:
           - Effect: Allow
-            Principal: { Service: [ec2.amazonaws.com] }
+            Principal:
+              Service: [ec2.amazonaws.com]
             Action: sts:AssumeRole
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
@@ -144,6 +149,8 @@ Resources:
       Name: !Ref ClusterName
       Version: !Ref ClusterVersion
       RoleArn: !GetAtt ClusterRole.Arn
+      AccessConfig:
+        AuthenticationMode: API_AND_CONFIG_MAP
       ResourcesVpcConfig:
         SubnetIds:
           - !Ref PublicSubnet1
@@ -179,6 +186,20 @@ Resources:
       AddonName: eks-pod-identity-agent
       ClusterName: !Ref EKSCluster
       ResolveConflicts: OVERWRITE
+
+  # Grant interactive access to IAM user arn:aws:iam::303747928409:user/eruser315
+  EruserAccessEntry:
+    Type: AWS::EKS::AccessEntry
+    Properties:
+      ClusterName: !Ref ClusterName
+      PrincipalArn: arn:aws:iam::303747928409:user/eruser315
+      Type: STANDARD
+      KubernetesGroups:
+        - system:masters
+      AccessPolicies:
+        - PolicyArn: arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy
+          AccessScope:
+            Type: cluster
 
 Outputs:
   ClusterEndpoint:
