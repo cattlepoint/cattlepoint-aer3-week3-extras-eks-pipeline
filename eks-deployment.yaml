@@ -196,8 +196,9 @@ Resources:
   # IAM user access entry
   EruserAccessEntry:
     Type: AWS::EKS::AccessEntry
+    DependsOn: EKSCluster
     Properties:
-      ClusterName: !Ref ClusterName
+      ClusterName: !Ref EKSCluster
       PrincipalArn: arn:aws:iam::303747928409:user/eruser315
       Type: STANDARD
       AccessPolicies:
