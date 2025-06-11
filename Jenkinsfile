@@ -32,7 +32,7 @@ pipeline {
         stage('Deploy / Update stack') {
             steps {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'eks-deploy']]) {
-                    sh """
+                    sh '''
                         #!/bin/bash
                         set +e
                         stack_status=$(aws cloudformation describe-stacks --stack-name ${STACK_NAME} --query 'Stacks[0].StackStatus' --output text 2>/dev/null || true)
@@ -46,7 +46,7 @@ pipeline {
                           --stack-name ${STACK_NAME} \
                           --template-file ${TEMPLATE_FILE} \
                           --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM
-                    """
+                    '''
                 }
             }
         }
@@ -54,12 +54,12 @@ pipeline {
         stage('Show outputs') {
             steps {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'eks-deploy']]) {
-                    sh """
+                    sh '''
                         aws cloudformation describe-stacks \
                           --stack-name ${STACK_NAME} \
                           --query 'Stacks[0].Outputs' \
                           --output table
-                    """
+                    '''
                 }
             }
         }
