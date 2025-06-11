@@ -4,7 +4,7 @@ pipeline {
     /* ---------- Runtime parameters ---------- */
     parameters {
         string(name: 'CLUSTER_NAME',        defaultValue: 'basic-eks', description: 'EKS cluster / stack name')
-        string(name: 'CF_TEMPLATE',         defaultValue: 'eks-cluster.yaml', description: 'CloudFormation template file')
+        string(name: 'CF_TEMPLATE',         defaultValue: 'eks-deployment.yaml', description: 'CloudFormation template file')
         string(name: 'AWS_REGION',          defaultValue: 'us-east-1',        description: 'Deployment region')
     }
 
@@ -23,7 +23,7 @@ pipeline {
 
         stage('Validate template') {
             steps {
-                withAWS(credentials: 'eks-deploy', region: "${AWS_DEFAULT_REGION}") {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'eks-deploy']]) {
                     sh "aws cloudformation validate-template --template-body file://${TEMPLATE_FILE}"
                 }
             }
@@ -31,7 +31,7 @@ pipeline {
 
         stage('Deploy / Update stack') {
             steps {
-                withAWS(credentials: 'eks-deploy', region: "${AWS_DEFAULT_REGION}") {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'eks-deploy']]) {
                     sh """
                         aws cloudformation deploy \
                           --stack-name ${STACK_NAME} \
@@ -44,7 +44,7 @@ pipeline {
 
         stage('Show outputs') {
             steps {
-                withAWS(credentials: 'eks-deploy', region: "${AWS_DEFAULT_REGION}") {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'eks-deploy']]) {
                     sh """
                         aws cloudformation describe-stacks \
                           --stack-name ${STACK_NAME} \
@@ -57,7 +57,7 @@ pipeline {
 
         stage('Update kubeconfig') {
             steps {
-                withAWS(credentials: 'eks-deploy', region: "${AWS_DEFAULT_REGION}") {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'eks-deploy']]) {
                     sh "aws eks update-kubeconfig --name ${STACK_NAME}"
                 }
             }
