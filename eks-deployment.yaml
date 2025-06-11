@@ -163,7 +163,7 @@ Resources:
         - !Ref PublicSubnet2
         - !Ref PublicSubnet3
       InstanceTypes: [t3.nano]
-      AmiType: AL2_x86_64
+      AmiType: AL2023_x86_64_STANDARD
       CapacityType: ON_DEMAND
       ScalingConfig:
         DesiredSize: !Ref DesiredCapacity
