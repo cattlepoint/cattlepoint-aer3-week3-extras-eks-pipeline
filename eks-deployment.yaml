@@ -187,11 +187,10 @@ Resources:
   # EKS Pod Identity Agent Addon
   PodIdentityAgentAddon:
     Type: AWS::EKS::Addon
-    DeletionPolicy: Retain
-    UpdateReplacePolicy: Retain
+    DependsOn: EKSCluster
     Properties:
       AddonName: eks-pod-identity-agent
-      ClusterName: !Ref ClusterName
+      ClusterName: !Ref EKSCluster
       ResolveConflicts: PRESERVE
 
   # IAM user access entry
