@@ -33,6 +33,15 @@ pipeline {
             steps {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'eks-deploy']]) {
                     sh """
+                        #!/bin/bash
+                        set +e
+                        stack_status=$(aws cloudformation describe-stacks --stack-name ${STACK_NAME} --query 'Stacks[0].StackStatus' --output text 2>/dev/null || true)
+                        set -e
+                        if [ "${stack_status}" = "ROLLBACK_COMPLETE" ]; then
+                          echo "Stack ${STACK_NAME} is in ROLLBACK_COMPLETE. Deleting before redeploy..."
+                          aws cloudformation delete-stack --stack-name ${STACK_NAME}
+                          aws cloudformation wait stack_delete_complete --stack-name ${STACK_NAME}
+                        fi
                         aws cloudformation deploy \
                           --stack-name ${STACK_NAME} \
                           --template-file ${TEMPLATE_FILE} \
