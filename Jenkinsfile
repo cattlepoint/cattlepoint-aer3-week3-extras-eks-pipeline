@@ -37,8 +37,8 @@ pipeline {
                         set +e
                         stack_status=$(aws cloudformation describe-stacks --stack-name ${STACK_NAME} --query 'Stacks[0].StackStatus' --output text 2>/dev/null || true)
                         set -e
-                        if [ "${stack_status}" = "ROLLBACK_COMPLETE" ]; then
-                          echo "Stack ${STACK_NAME} is in ROLLBACK_COMPLETE. Deleting before redeploy..."
+                        if [ "${stack_status}" = "ROLLBACK_COMPLETE" ] || [ "${stack_status}" = "ROLLBACK_FAILED" ]; then
+                          echo "Stack ${STACK_NAME} is in ${stack_status}. Deleting before redeploy..."
                           aws cloudformation delete-stack --stack-name ${STACK_NAME}
                           aws cloudformation wait stack-delete-complete --stack-name ${STACK_NAME}
                         fi
