@@ -7,7 +7,7 @@ Parameters:
     Default: basic-eks
   ClusterVersion:
     Type: String
-    Default: "1.29"
+    Default: "1.33"
   DesiredCapacity:
     Type: Number
     Default: 2
