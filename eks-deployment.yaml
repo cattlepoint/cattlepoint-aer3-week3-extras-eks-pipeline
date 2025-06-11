@@ -203,7 +203,7 @@ Resources:
       PrincipalArn: arn:aws:iam::303747928409:user/eruser315
       Type: STANDARD
       AccessPolicies:
-        - PolicyArn: arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy
+        - PolicyArn: arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy
           AccessScope: { Type: cluster }
 
 Outputs:
