@@ -166,8 +166,9 @@ Resources:
   # Managed node group
   NodeGroup:
     Type: AWS::EKS::Nodegroup
+    DependsOn: EKSCluster
     Properties:
-      ClusterName: !Ref ClusterName
+      ClusterName: !Ref EKSCluster
       NodeRole: !GetAtt NodeRole.Arn
       Subnets:
         - !Ref PublicSubnet1
