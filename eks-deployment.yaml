@@ -172,6 +172,14 @@ Resources:
       Tags:
         Name: !Sub "${ClusterName}-ng"
 
+  # EKS Pod Identity Agent Addon
+  PodIdentityAgentAddon:
+    Type: AWS::EKS::Addon
+    Properties:
+      AddonName: eks-pod-identity-agent
+      ClusterName: !Ref EKSCluster
+      ResolveConflicts: OVERWRITE
+
 Outputs:
   ClusterEndpoint:
     Description: API server endpoint
