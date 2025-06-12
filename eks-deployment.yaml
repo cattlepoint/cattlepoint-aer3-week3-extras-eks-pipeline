@@ -162,6 +162,12 @@ Resources:
       ComputeConfig:
         Enabled: true
         NodeRoleArn: !GetAtt NodeRole.Arn
+      KubernetesNetworkConfig:
+        ElasticLoadBalancing:
+        Enabled: true
+      StorageConfig:
+        BlockStorage:
+        Enabled: true
       AccessConfig:
         AuthenticationMode: API_AND_CONFIG_MAP
       ResourcesVpcConfig:
