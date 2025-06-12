@@ -164,10 +164,10 @@ Resources:
         NodeRoleArn: !GetAtt NodeRole.Arn
       KubernetesNetworkConfig:
         ElasticLoadBalancing:
-        Enabled: true
+          Enabled: true
       StorageConfig:
         BlockStorage:
-        Enabled: true
+          Enabled: true
       AccessConfig:
         AuthenticationMode: API_AND_CONFIG_MAP
       ResourcesVpcConfig:
